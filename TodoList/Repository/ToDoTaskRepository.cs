@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -17,19 +18,43 @@ namespace TodoList.Repository
             _toDoListContext = toDoListContext;
         }
 
-        public Task<ToDoTask> Add(ToDoTask entity)
+        public Task<ToDoTask> Add(ToDoTask toDoTaskToAdd)
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                if (_toDoListContext != null)
+                {
+                    _toDoListContext.Add(toDoTaskToAdd);
+                    _toDoListContext.SaveChanges();
+                    return toDoTaskToAdd;
+                }
+                else
+                {
+                    return null;
+                }
+            });
         }
 
-        public Task<bool> Delete(ToDoTask entity)
+        public Task<bool> Delete(ToDoTask toDoTaskToDelete)
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                if (_toDoListContext != null)
+                {
+                    _toDoListContext.Remove(toDoTaskToDelete);
+                    _toDoListContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
         }
 
         public Task<List<ToDoTask>> GetAll()
         {
-            throw new NotImplementedException();
+            return Task.Run(async () => await _toDoListContext.ToDoTasks.ToListAsync());
         }
 
         public async Task<IEnumerable<ToDoTask>> GetAll(int page)
@@ -39,7 +64,7 @@ namespace TodoList.Repository
 
         public Task<ToDoTask> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            return Task.Run(() => _toDoListContext.ToDoTasks.Where(e => e.ToDoTaskID == id).FirstOrDefaultAsync());
         }
 
         public Task<IPagedList<ToDoTask>> GetPage(int page)
@@ -55,37 +80,85 @@ namespace TodoList.Repository
 
         public Task<IPagedList<ToDoTask>> GetPage(int page, Expression<Func<ToDoTask, bool>> where)
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                var products = _toDoListContext.ToDoTasks.Where(where).OrderByDescending(x => x.PriorityStatus).ThenBy(x => x.Title);
+                var pageNumber = (page != 0) ? page : 1;
+
+                return products.ToPagedList(pageNumber, 3);
+            });
         }
 
-        public Task<IEnumerable<ToDoTask>> GetToDoTasksByDescription(int page, string description)
+        public async Task<IEnumerable<ToDoTask>> GetToDoTasksByDescription(int page, string description)
         {
-            throw new NotImplementedException();
+            return await GetPage(page, x => x.Description.Contains(description));
         }
 
-        public Task<IEnumerable<ToDoTask>> GetToDoTasksByIsDoneStatus(int page, IsDoneFiltration isDoneFiltration)
+        public async Task<IEnumerable<ToDoTask>> GetToDoTasksByIsDoneStatus(int page, IsDoneFiltration isDoneFiltration)
         {
-            throw new NotImplementedException();
+            return isDoneFiltration switch
+            {
+                IsDoneFiltration.OnlyUndone => await GetPage(page, e => !e.IsDone),
+                IsDoneFiltration.OnlyDone => await GetPage(page, e => e.IsDone),
+                IsDoneFiltration.All => await GetPage(page),
+                _ => null,
+            };
         }
 
-        public Task<IEnumerable<ToDoTask>> GetToDoTasksByTitle(int page, string title)
+        public async Task<IEnumerable<ToDoTask>> GetToDoTasksByTitle(int page, string title)
         {
-            throw new NotImplementedException();
+            return await GetPage(page, x => x.Title.Contains(title));
         }
 
-        public Task<ToDoTask> Update(ToDoTask entity)
+        public Task<ToDoTask> Update(ToDoTask toDoTask)
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                if (_toDoListContext != null)
+                {
+                    _toDoListContext.Update(toDoTask);
+                    _toDoListContext.SaveChanges();
+                    return toDoTask;
+                }
+                else
+                {
+                    return null;
+                }
+            });
         }
 
         public Task<bool> UpdateToDoTaskIsDone(ToDoTask toDoTaskToUpdate)
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                if (_toDoListContext != null)
+                {
+                    _toDoListContext.Update(toDoTaskToUpdate);
+                    _toDoListContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
         }
 
         public Task<bool> UpdateToDoTaskPriorityStatus(ToDoTask toDoTaskToUpdate)
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                if (_toDoListContext != null)
+                {
+                    _toDoListContext.Update(toDoTaskToUpdate);
+                    _toDoListContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
         }
     }
 }

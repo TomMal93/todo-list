@@ -16,14 +16,45 @@ namespace TodoList.DomainService
             _toDoTaskRepository = toDoTaskRepository;
         }
 
-        public Task<ToDoTask> AddToDoTask(ToDoTask toDoTask)
+        public async Task<ToDoTask> AddToDoTask(ToDoTask toDoTask)
         {
-            throw new NotImplementedException();
+            var toDoTasks = await _toDoTaskRepository.GetAll();
+
+            if (toDoTasks == null)
+            {
+                throw new Exception(ExceptionMessages.NoToDoTasksInDatabase);
+            }
+
+            if (toDoTasks.Any(x => x.ToDoTaskID == toDoTask.ToDoTaskID))
+            {
+                throw new Exception(ExceptionMessages.ToDoTaskAlreadyExisted);
+            }
+
+            if (toDoTasks.Any(x => x.Title == toDoTask.Title))
+            {
+                throw new Exception(ExceptionMessages.ToDoTaskTitleAlreadyExisted);
+            }
+
+            return await _toDoTaskRepository.Add(toDoTask);
         }
 
-        public Task<bool> DeleteToDoTask(Guid toDoTaskID)
+        public async Task<bool> DeleteToDoTask(Guid toDoTaskID)
         {
-            throw new NotImplementedException();
+            var toDoTasks = await _toDoTaskRepository.GetAll();
+
+            if (toDoTasks == null)
+            {
+                throw new Exception(ExceptionMessages.NoToDoTasksInDatabase);
+            }
+
+            var toDoTaskToDelete = toDoTasks.FirstOrDefault(x => x.ToDoTaskID == toDoTaskID);
+
+            if (toDoTaskToDelete == null)
+            {
+                throw new Exception(ExceptionMessages.ToDoTaskIsNotExisted);
+            }
+
+            return await _toDoTaskRepository.Delete(toDoTaskToDelete);
         }
 
         public async Task<IEnumerable<ToDoTask>> GetAllToDoTasks(int page)
@@ -31,39 +62,96 @@ namespace TodoList.DomainService
             return await _toDoTaskRepository.GetAll(page);
         }
 
-        public Task<ToDoTask> GetToDoTask(Guid toDoTaskID)
+        public async Task<ToDoTask> GetToDoTask(Guid toDoTaskID)
         {
-            throw new NotImplementedException();
+            return await _toDoTaskRepository.GetById(toDoTaskID);
         }
 
-        public Task<IEnumerable<ToDoTask>> GetToDoTasksByDescription(int page, string description)
+        public async Task<IEnumerable<ToDoTask>> GetToDoTasksByDescription(int page, string description)
         {
-            throw new NotImplementedException();
+            return await _toDoTaskRepository.GetToDoTasksByDescription(page, description);
         }
 
-        public Task<IEnumerable<ToDoTask>> GetToDoTasksByIsDoneStatus(int page, IsDoneFiltration isDoneFiltration)
+        public async Task<IEnumerable<ToDoTask>> GetToDoTasksByIsDoneStatus(int page, IsDoneFiltration isDoneFiltration)
         {
-            throw new NotImplementedException();
+            return await _toDoTaskRepository.GetToDoTasksByIsDoneStatus(page, isDoneFiltration);
         }
 
-        public Task<IEnumerable<ToDoTask>> GetToDoTasksByTitle(int page, string title)
+        public async Task<IEnumerable<ToDoTask>> GetToDoTasksByTitle(int page, string title)
         {
-            throw new NotImplementedException();
+            return await _toDoTaskRepository.GetToDoTasksByTitle(page, title);
         }
 
-        public Task<ToDoTask> UpdateToDoTask(Guid Id, ToDoTask toDoTask)
+        public async Task<ToDoTask> UpdateToDoTask(Guid id, ToDoTask toDoTask)
         {
-            throw new NotImplementedException();
+            var toDoTasks = await _toDoTaskRepository.GetAll();
+
+            if (toDoTasks == null)
+            {
+                throw new Exception(ExceptionMessages.NoToDoTasksInDatabase);
+            }
+
+            var toDoTaskToUpdate = toDoTasks.FirstOrDefault(x => x.ToDoTaskID == id);
+
+            if (toDoTaskToUpdate == null)
+            {
+                throw new Exception(ExceptionMessages.ToDoTaskIsNotExisted);
+            }
+
+            SetNewValuesTaskToUpdate(toDoTask, toDoTaskToUpdate);
+
+            return await _toDoTaskRepository.Update(toDoTaskToUpdate);
         }
 
-        public Task<bool> UpdateToDoTaskIsDone(Guid toDoTaskID, bool isDone)
+        private void SetNewValuesTaskToUpdate(ToDoTask toDoTask, ToDoTask toDoTaskToUpdate)
         {
-            throw new NotImplementedException();
+            toDoTaskToUpdate.Description = toDoTask.Description;
+            toDoTaskToUpdate.FinishDate = toDoTask.FinishDate;
+            toDoTaskToUpdate.Title = toDoTask.Title;
+            toDoTaskToUpdate.IsDone = toDoTask.IsDone;
+            toDoTaskToUpdate.PriorityStatus = toDoTask.PriorityStatus;
         }
 
-        public Task<bool> UpdateToDoTaskPriorityStatus(Guid id, Priority priorityStatus)
+        public async Task<bool> UpdateToDoTaskIsDone(Guid id, bool isDone)
         {
-            throw new NotImplementedException();
+            var toDoTasks = await _toDoTaskRepository.GetAll();
+
+            if (toDoTasks == null)
+            {
+                throw new Exception(ExceptionMessages.NoToDoTasksInDatabase);
+            }
+
+            var toDoTaskToUpdate = toDoTasks.FirstOrDefault(x => x.ToDoTaskID == id);
+
+            if (toDoTaskToUpdate == null)
+            {
+                throw new Exception(ExceptionMessages.ToDoTaskIsNotExisted);
+            }
+
+            toDoTaskToUpdate.IsDone = isDone;
+
+            return await _toDoTaskRepository.UpdateToDoTaskIsDone(toDoTaskToUpdate);
+        }
+
+        public async Task<bool> UpdateToDoTaskPriorityStatus(Guid id, Priority priorityStatus)
+        {
+            var toDoTasks = await _toDoTaskRepository.GetAll();
+
+            if (toDoTasks == null)
+            {
+                throw new Exception(ExceptionMessages.NoToDoTasksInDatabase);
+            }
+
+            var toDoTaskToUpdate = toDoTasks.FirstOrDefault(x => x.ToDoTaskID == id);
+
+            if (toDoTaskToUpdate == null)
+            {
+                throw new Exception(ExceptionMessages.ToDoTaskIsNotExisted);
+            }
+
+            toDoTaskToUpdate.PriorityStatus = priorityStatus;
+
+            return await _toDoTaskRepository.UpdateToDoTaskPriorityStatus(toDoTaskToUpdate);
         }
     }
 }

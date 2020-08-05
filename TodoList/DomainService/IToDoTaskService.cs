@@ -13,8 +13,8 @@ namespace TodoList.DomainService
         Task<ToDoTask> GetToDoTask(Guid toDoTaskID);
         Task<ToDoTask> AddToDoTask(ToDoTask toDoTask);
         Task<IEnumerable<ToDoTask>> GetToDoTasksByIsDoneStatus(int page, IsDoneFiltration isDoneFiltration);
-        Task<ToDoTask> UpdateToDoTask(Guid Id, ToDoTask toDoTask);
-        Task<bool> UpdateToDoTaskIsDone(Guid toDoTaskID, bool isDone);
+        Task<ToDoTask> UpdateToDoTask(Guid id, ToDoTask toDoTask);
+        Task<bool> UpdateToDoTaskIsDone(Guid id, bool isDone);
         Task<bool> UpdateToDoTaskPriorityStatus(Guid id, Priority priorityStatus);
         Task<bool> DeleteToDoTask(Guid toDoTaskID);
         Task<IEnumerable<ToDoTask>> GetToDoTasksByTitle(int page, string title);

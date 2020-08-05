@@ -13,5 +13,24 @@
             <response code="200">Success</response>
             <response code="400">Fail</response>
         </member>
+        <member name="M:TodoList.Controllers.ToDoListController.GetToDoTask(System.Guid)">
+            <summary>
+            Get single todo task
+            </summary>
+            <param name="id">Id of task to display</param>
+            <returns>Ok/Bad Request</returns>
+            <response code="200">Success</response>
+            <response code="400">Fail</response>
+        </member>
+        <member name="M:TodoList.Controllers.ToDoListController.GetToDoTasksByIsDoneStatus(TodoList.Repository.IsDoneFiltration,System.Int32)">
+            <summary>
+            Get all done todo tasks limited by pagination
+            </summary>
+            <param name="isDoneFiltration">Filtration level - 0 - undone, 1 - done, 2 - all</param>
+            <param name="page">Page number to display</param>
+            <returns>Ok/Bad Request</returns>
+            <response code="200">Success</response>
+            <response code="400">Fail</response>
+        </member>
     </members>
 </doc>
