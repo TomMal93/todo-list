@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TodoList.Domain;
+using TodoList.Repository;
 
 namespace TodoList
 {
@@ -24,6 +25,8 @@ namespace TodoList
         {
             services.AddControllers();
             services.AddDbContext<ToDoListContext>(op => op.UseSqlServer(Configuration["ConnectionString:ToDoListDB"]));
+
+            services.AddScoped<IToDoTaskRepository, ToDoTaskRepository>();
 
             services.AddSwaggerGen(c =>
             {
