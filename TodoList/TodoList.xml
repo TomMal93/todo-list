@@ -4,5 +4,14 @@
         <name>TodoList</name>
     </assembly>
     <members>
+        <member name="M:TodoList.Controllers.ToDoListController.GetAllToDoTasks(System.Int32)">
+            <summary>
+            Get all todo tasks limited by pagination
+            </summary>
+            <param name="page">Page number to display</param>
+            <returns>Ok/Bad Request</returns>
+            <response code="200">Success</response>
+            <response code="400">Fail</response>
+        </member>
     </members>
 </doc>

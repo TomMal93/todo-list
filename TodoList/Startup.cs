@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using TodoList.Domain;
+using TodoList.DomainService;
 using TodoList.Repository;
 
 namespace TodoList
@@ -27,6 +28,7 @@ namespace TodoList
             services.AddDbContext<ToDoListContext>(op => op.UseSqlServer(Configuration["ConnectionString:ToDoListDB"]));
 
             services.AddScoped<IToDoTaskRepository, ToDoTaskRepository>();
+            services.AddScoped<IToDoTaskService, ToDoTaskService>();
 
             services.AddSwaggerGen(c =>
             {
@@ -36,6 +38,9 @@ namespace TodoList
                 var xmlPath = Path.Combine(Directory.GetCurrentDirectory(), xmlFile);
                 c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
             });
+
+            services.AddControllersWithViews()
+                .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
