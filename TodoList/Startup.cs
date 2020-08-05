@@ -34,7 +34,7 @@ namespace TodoList
                 c.SwaggerDoc(name: "v1", new OpenApiInfo { Title = "ToDo list", Version = "v1" });
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                var xmlPath = Path.Combine(Directory.GetCurrentDirectory(), xmlFile);
                 c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
             });
         }
