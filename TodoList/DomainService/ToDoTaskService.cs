@@ -28,7 +28,7 @@ namespace TodoList.DomainService
 
         public Task<IEnumerable<ToDoTask>> GetAllToDoTasks(int page)
         {
-            throw new NotImplementedException();
+            return await _toDoTaskRepository.GetAll(page);
         }
 
         public Task<ToDoTask> GetToDoTask(Guid toDoTaskID)

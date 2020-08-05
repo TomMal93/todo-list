@@ -32,9 +32,9 @@ namespace TodoList.Repository
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<ToDoTask>> GetAll(int page)
+        public async Task<IEnumerable<ToDoTask>> GetAll(int page)
         {
-            throw new NotImplementedException();
+            return await GetPage(page);
         }
 
         public Task<ToDoTask> GetById(Guid id)
@@ -44,7 +44,13 @@ namespace TodoList.Repository
 
         public Task<IPagedList<ToDoTask>> GetPage(int page)
         {
-            throw new NotImplementedException();
+            return Task.Run(() =>
+            {
+                var products = _toDoListContext.ToDoTasks.OrderByDescending(x => x.PriorityStatus).ThenBy(x => x.Title);
+                var pageNumber = (page != 0) ? page : 1;
+
+                return products.ToPagedList(pageNumber, 3);
+            });
         }
 
         public Task<IPagedList<ToDoTask>> GetPage(int page, Expression<Func<ToDoTask, bool>> where)
