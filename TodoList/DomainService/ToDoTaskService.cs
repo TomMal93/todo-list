@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TodoList.Domain;
+using TodoList.Helper;
 using TodoList.Repository;
 
 namespace TodoList.DomainService
@@ -99,8 +100,21 @@ namespace TodoList.DomainService
             }
 
             SetNewValuesTaskToUpdate(toDoTask, toDoTaskToUpdate);
+            CheckPriorityLevel(toDoTaskToUpdate);
 
             return await _toDoTaskRepository.Update(toDoTaskToUpdate);
+        }
+
+        private static void CheckPriorityLevel(ToDoTask toDoTaskToUpdate)
+        {
+            if (toDoTaskToUpdate.PriorityStatus == Priority.High)
+            {
+                TaskHighlightHelper.HighlightTask(toDoTaskToUpdate);
+            }
+            else if (toDoTaskToUpdate.PriorityStatus != Priority.High && toDoTaskToUpdate.Title.Contains("\u2605"))
+            {
+                TaskHighlightHelper.StopHighlightTask(toDoTaskToUpdate);
+            }
         }
 
         private void SetNewValuesTaskToUpdate(ToDoTask toDoTask, ToDoTask toDoTaskToUpdate)
@@ -150,6 +164,8 @@ namespace TodoList.DomainService
             }
 
             toDoTaskToUpdate.PriorityStatus = priorityStatus;
+
+            CheckPriorityLevel(toDoTaskToUpdate);
 
             return await _toDoTaskRepository.UpdateToDoTaskPriorityStatus(toDoTaskToUpdate);
         }
